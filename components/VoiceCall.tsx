@@ -119,7 +119,7 @@ export default function VoiceCall() {
         speechConfig: {
           voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
         },
-        systemInstruction: "You are Janmitra, a helpful, polite, simple-language voice companion for rural Indians. Always respond in the user's detected language/dialect (Hindi, Awadhi, Bundeli, Telugu, Tamil, Odia, Bhojpuri, Haryanvi etc.).  Use easy words, speak slowly, explain schemes clearly.  Only give verified government info. If unsure, say you'll check or transfer to officer. Focus on: PM Kisan, loans for SC/ST, pensions, complaints, etc."
+        systemInstruction: "You are Janmitra, a helpful, polite, simple-language voice companion for rural Indians. Always respond in the user's detected language/dialect (Hindi, Awadhi, Bundeli, Telugu, etc.).  Use easy words, speak slowly, explain schemes clearly.  Only give verified government info. If unsure, say you'll check or transfer to officer. Focus on: PM Kisan, loans for SC/ST, pensions, complaints, etc."
       },
       callbacks: {
         onopen: () => {
@@ -151,18 +151,11 @@ export default function VoiceCall() {
         onmessage: async (msg: LiveServerMessage) => {
           const { serverContent } = msg;
 
-          // 1. Thinking: Trigger when we receive input transcription (User is talking/server processing)
-          if (serverContent?.inputTranscription) {
-            setStatus('THINKING');
-          }
-
-          // 2. Speaking: Trigger when we receive AUDIO data (Reliable)
-          // We check for inlineData instead of outputTranscription because responseModalities is AUDIO only.
+          // 1. Audio Processing (Speaking)
           const audio = serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
           
           if (audio) {
-            setStatus('SPEAKING'); // <--- Fixed: Trigger SPEAKING on audio arrival
-            
+            setStatus('SPEAKING'); 
             if (outputCtx.current) {
               const ctx = outputCtx.current;
               nextStart.current = Math.max(nextStart.current, ctx.currentTime);
@@ -177,18 +170,25 @@ export default function VoiceCall() {
               activeSources.current.add(source);
               source.onended = () => activeSources.current.delete(source);
             }
+          } 
+          // 2. Thinking Logic
+          // If we receive content that isn't audio, isn't a turn complete, and isn't interruption,
+          // it implies the server is processing (e.g. inputTranscription, toolUse, or empty turn start)
+          else if (serverContent && !serverContent.turnComplete && !serverContent.interrupted) {
+             setStatus('THINKING');
           }
 
-          // 3. Listening: Trigger when the turn is officially complete
+          // 3. Turn Complete -> Back to Listening
           if (serverContent?.turnComplete) {
             setStatus('LISTENING');
           }
 
+          // 4. Interruption -> Reset
           if (serverContent?.interrupted) {
             activeSources.current.forEach((s) => s.stop());
             activeSources.current.clear();
             nextStart.current = 0;
-            setStatus('LISTENING'); // Reset status on interruption
+            setStatus('LISTENING');
           }
         },
         onclose: stop,
@@ -307,10 +307,10 @@ export default function VoiceCall() {
                     </div>
                   </div>
 
-                  {/* Controls Grid */}
-                  <div className="w-full max-w-[280px] grid grid-cols-2 gap-4 gap-y-6">
+                  {/* Controls - Fixed Alignment */}
+                  <div className="w-full max-w-[280px] flex flex-col items-center gap-6">
                     
-                    {/* Mute Button */}
+                    {/* Mute Button (Centered) */}
                     <ControlBtn 
                       icon={muted ? <MicOff /> : <Mic />} 
                       label="Mute" 
@@ -321,7 +321,7 @@ export default function VoiceCall() {
                     {/* END CALL */}
                     <button 
                       onClick={stop}
-                      className="col-span-2 mt-4 bg-red-500 hover:bg-red-600 text-white rounded-full py-5 flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
+                      className="w-full bg-red-500 hover:bg-red-600 text-white rounded-full py-5 flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
                     >
                       <PhoneOff size={32} fill="currentColor" />
                     </button>
