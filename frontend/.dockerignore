@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+.pnpm-debug.log*
+
+# Testing
+coverage
+
+# Next.js
+.next
+out
+
+# Production builds
+dist
+
+# Environment variables
+.env*
+!.env.example
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# Documentation
+*.md
+!README.md
+
+# CI/CD
+.github
