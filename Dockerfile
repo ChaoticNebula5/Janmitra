@@ -1,5 +1,7 @@
 # Dockerfile for Janmitra Voice Bot
-FROM python:3.12-slim
+FROM python:3.12
+
+# Note: Using full Python image to include OpenGL libs needed for OpenCV in SmallWebRTC
 
 # Install uv
 RUN pip install uv

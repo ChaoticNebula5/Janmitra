@@ -27,18 +27,10 @@ import os
 
 from dotenv import load_dotenv
 from loguru import logger
-from PIL import Image
 from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3
 from pipecat.audio.vad.silero import SileroVADAnalyzer
 from pipecat.audio.vad.vad_analyzer import VADParams
-from pipecat.frames.frames import (
-    BotStartedSpeakingFrame,
-    BotStoppedSpeakingFrame,
-    Frame,
-    LLMRunFrame,
-    OutputImageRawFrame,
-    SpriteFrame,
-)
+from pipecat.frames.frames import LLMRunFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
 from pipecat.pipeline.task import PipelineParams, PipelineTask
@@ -77,13 +69,12 @@ async def run_bot(transport: BaseTransport):
 
     system_instruction = "You are Janmitra, a helpful voice assistant for rural Indians. Speak only in Hindi or Bundeli dialect. Provide factual information about government schemes, loans, and services. Cite sources when possible."
 
-    tools = None
-
     # Initialize the Gemini Live model
     llm = GeminiLiveLLMService(
         api_key=api_key,
         model="models/gemini-2.5-flash-native-audio-preview-12-2025",
         voice_id="Charon",  # Aoede, Charon, Fenrir, Kore, Puck
+        system_instruction=system_instruction,
     )
 
     messages = [
