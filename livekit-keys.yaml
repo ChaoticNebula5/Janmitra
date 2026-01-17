@@ -4,9 +4,9 @@
 
 keys:
   # API key for authentication
-  api_key: "your_livekit_api_key_here"
+  api_key: "devkey"
   # API secret for signing tokens
-  api_secret: "your_livekit_api_secret_here"
+  api_secret: "devsecret"
 
 # Server configuration
 rtc:
