@@ -149,30 +149,46 @@ export default function VoiceCall() {
           processor.connect(inputCtx.current!.destination);
         },
         onmessage: async (msg: LiveServerMessage) => {
-          if (msg.serverContent?.inputTranscription) setStatus('THINKING');
-          if (msg.serverContent?.outputTranscription) setStatus('SPEAKING');
+          const { serverContent } = msg;
 
-          const audio = msg.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
-          if (audio && outputCtx.current) {
-            const ctx = outputCtx.current;
-            nextStart.current = Math.max(nextStart.current, ctx.currentTime);
-            const buffer = await AudioUtils.decodeAudioData(
-              AudioUtils.decode(audio), ctx, OUTPUT_SAMPLE_RATE
-            );
-            const source = ctx.createBufferSource();
-            source.buffer = buffer;
-            source.connect(ctx.destination);
-            source.start(nextStart.current);
-            nextStart.current += buffer.duration;
-            activeSources.current.add(source);
-            source.onended = () => activeSources.current.delete(source);
+          // 1. Thinking: Trigger when we receive input transcription (User is talking/server processing)
+          if (serverContent?.inputTranscription) {
+            setStatus('THINKING');
           }
 
-          if (msg.serverContent?.turnComplete) setStatus('LISTENING');
-          if (msg.serverContent?.interrupted) {
+          // 2. Speaking: Trigger when we receive AUDIO data (Reliable)
+          // We check for inlineData instead of outputTranscription because responseModalities is AUDIO only.
+          const audio = serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
+          
+          if (audio) {
+            setStatus('SPEAKING'); // <--- Fixed: Trigger SPEAKING on audio arrival
+            
+            if (outputCtx.current) {
+              const ctx = outputCtx.current;
+              nextStart.current = Math.max(nextStart.current, ctx.currentTime);
+              const buffer = await AudioUtils.decodeAudioData(
+                AudioUtils.decode(audio), ctx, OUTPUT_SAMPLE_RATE
+              );
+              const source = ctx.createBufferSource();
+              source.buffer = buffer;
+              source.connect(ctx.destination);
+              source.start(nextStart.current);
+              nextStart.current += buffer.duration;
+              activeSources.current.add(source);
+              source.onended = () => activeSources.current.delete(source);
+            }
+          }
+
+          // 3. Listening: Trigger when the turn is officially complete
+          if (serverContent?.turnComplete) {
+            setStatus('LISTENING');
+          }
+
+          if (serverContent?.interrupted) {
             activeSources.current.forEach((s) => s.stop());
             activeSources.current.clear();
             nextStart.current = 0;
+            setStatus('LISTENING'); // Reset status on interruption
           }
         },
         onclose: stop,
@@ -264,11 +280,11 @@ export default function VoiceCall() {
                   {/* Contact Info */}
                   <div className="flex flex-col items-center gap-4 mb-auto">
                     <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-cyan-900 to-blue-900 border-4 border-[#1a1a1a] flex items-center justify-center shadow-2xl relative">
-                       {/* Speaking Ripple */}
-                       {status === 'SPEAKING' && (
-                         <div className="absolute inset-0 rounded-full border border-cyan-500/50 animate-ping" />
-                       )}
-                       <span className="text-4xl">🤖</span>
+                        {/* Speaking Ripple */}
+                        {status === 'SPEAKING' && (
+                          <div className="absolute inset-0 rounded-full border border-cyan-500/50 animate-ping" />
+                        )}
+                        <span className="text-4xl">🤖</span>
                     </div>
                     
                     <div className="text-center">
@@ -284,7 +300,7 @@ export default function VoiceCall() {
                         ) : (
                           <p className="text-white/50 text-sm font-medium animate-pulse">
                             {status === 'LISTENING' ? 'Listening...' : 
-                            status === 'THINKING' ? 'Thinking...' : formatTime(callDuration)}
+                             status === 'THINKING' ? 'Thinking...' : formatTime(callDuration)}
                           </p>
                         )}
                       </div>
