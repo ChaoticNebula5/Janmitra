@@ -197,7 +197,8 @@ const TextSequence = memo(function TextSequence({
 
       <motion.div style={{ opacity: opacity2, y: y2 }} className="absolute">
         <h2 className="text-6xl font-bold">
-          Schemes exist. Support exists.
+          Schemes exist. <br />
+          Support exists.
           <br />
           <span className="text-gray-500">Awareness doesn’t.</span>
         </h2>
@@ -218,9 +219,7 @@ const TextSequence = memo(function TextSequence({
         className="absolute top-[-10vh]"
       >
         <h2 className="text-5xl md:text-7xl font-bold leading-tight">
-          JanMitra turns complex systems into simple conversations —
-          <br />
-          clarity, confidence, inclusion.
+          JanMitra exists to change that.
         </h2>
       </motion.div>
     </div>
