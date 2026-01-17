@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # LiveKit Server
+  livekit-server:
+    image: livekit/livekit-server:latest
+    ports:
+      - "7880:7880"  # WebRTC
+      - "7881:7881"  # HTTP
+      - "50000-60000:50000-60000/udp"  # TURN/STUN
+    environment:
+      - LIVEKIT_KEYS_FILE=/etc/livekit/keys.yaml
+    volumes:
+      - ./livekit-keys.yaml:/etc/livekit/keys.yaml:ro
+    command: --config /etc/livekit/keys.yaml
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7881/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend Agent Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "7880"  # Expose LiveKit port
+    environment:
+      - LIVEKIT_URL=ws://livekit-server:7881
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    depends_on:
+      livekit-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend Web App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "7880"  # Expose LiveKit port
+    environment:
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
+      - NEXT_PUBLIC_LIVEKIT_URL=ws://localhost:7881
+    depends_on:
+      - backend
+      - livekit-server
+    restart: unless-stopped

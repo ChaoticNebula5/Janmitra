@@ -66,6 +66,9 @@ USER appuser
 # Set Node.js to production mode
 ENV NODE_ENV=production
 
+# Expose ports for LiveKit WebRTC communication
+EXPOSE 7880
+
 # Run the application
 # The "start" command tells the worker to connect to LiveKit and begin waiting for jobs.
 CMD [ "pnpm", "start" ]

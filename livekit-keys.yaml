@@ -1,0 +1,32 @@
+# LiveKit Server Configuration
+# This file contains the keys and configuration for the LiveKit server
+# In production, you should generate proper keys and store them securely
+
+keys:
+  # API key for authentication
+  api_key: "your_livekit_api_key_here"
+  # API secret for signing tokens
+  api_secret: "your_livekit_api_secret_here"
+
+# Server configuration
+rtc:
+  # TCP port for WebRTC connections
+  port: 7880
+  # Enable TCP
+  tcp_port: 7881
+
+# Redis configuration (optional, for scaling)
+# redis:
+#   address: redis:6379
+
+# TURN server configuration (optional)
+# turn:
+#   enabled: true
+#   domain: your-domain.com
+
+# Logging
+logging:
+  level: info
+
+# Development mode
+development: true

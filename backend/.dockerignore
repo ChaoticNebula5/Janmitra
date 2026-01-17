@@ -10,8 +10,8 @@ build
 coverage
 
 # Local environment & config files
-.env
-.env.local
+.env*
+!.env.example
 .DS_Store
 
 # Logs & temp files

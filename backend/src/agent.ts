@@ -4,12 +4,12 @@ import {
   ServerOptions,
   cli,
   defineAgent,
-  inference,
   metrics,
   voice,
 } from '@livekit/agents';
 import * as livekit from '@livekit/agents-plugin-livekit';
 import * as silero from '@livekit/agents-plugin-silero';
+import * as google from '@livekit/agents-plugin-google';
 import { BackgroundVoiceCancellation } from '@livekit/noise-cancellation-node';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
@@ -19,10 +19,11 @@ dotenv.config({ path: '.env.local' });
 class Assistant extends voice.Agent {
   constructor() {
     super({
-      instructions: `You are a helpful voice AI assistant. The user is interacting with you via voice, even if you perceive the conversation as text.
-      You eagerly assist users with their questions by providing information from your extensive knowledge.
-      Your responses are concise, to the point, and without any complex formatting or punctuation including emojis, asterisks, or other symbols.
-      You are curious, friendly, and have a sense of humor.`,
+      instructions: `You are Janmitra, a voice companion for rural Indian citizens.
+      You automatically detect and respond in the user's local language/dialect (Hindi, regional languages).
+      You help with government services, schemes, and connect people to officials when needed.
+      Keep responses concise and helpful for low-literacy users.
+      Be friendly, patient, and culturally sensitive.`,
 
       // To add tools, specify `tools` in the constructor.
       // Here's an example that adds a simple weather tool.
@@ -53,38 +54,25 @@ export default defineAgent({
     proc.userData.vad = await silero.VAD.load();
   },
   entry: async (ctx: JobContext) => {
-    // Set up a voice AI pipeline using OpenAI, Cartesia, AssemblyAI, and the LiveKit turn detector
+    // Set up Gemini Live for end-to-end audio processing with dialect detection
     const session = new voice.AgentSession({
-      // Speech-to-text (STT) is your agent's ears, turning the user's speech into text that the LLM can understand
-      // See all available models at https://docs.livekit.io/agents/models/stt/
-      stt: new inference.STT({
-        model: 'assemblyai/universal-streaming',
-        language: 'en',
+      llm: new google.beta.realtime.RealtimeModel({
+        model: "gemini-2.5-flash-native-audio-preview-12-2025",
+        voice: "Charon",
+        temperature: 0.8,
+        instructions: `You are Janmitra, a voice companion for rural Indian citizens.
+        You automatically detect and respond in the user's local language/dialect (Hindi, regional languages).
+        You help with government services, schemes, and connect people to officials when needed.
+        Keep responses concise and helpful for low-literacy users.
+        Be friendly, patient, and culturally sensitive.`,
       }),
 
-      // A Large Language Model (LLM) is your agent's brain, processing user input and generating a response
-      // See all providers at https://docs.livekit.io/agents/models/llm/
-      llm: new inference.LLM({
-        model: 'openai/gpt-4.1-mini',
-      }),
-
-      // Text-to-speech (TTS) is your agent's voice, turning the LLM's text into speech that the user can hear
-      // See all available models as well as voice selections at https://docs.livekit.io/agents/models/tts/
-      tts: new inference.TTS({
-        model: 'cartesia/sonic-3',
-        voice: '9626c31c-bec5-4cca-baa8-f8ba9e84c8bc',
-      }),
-
-      // VAD and turn detection are used to determine when the user is speaking and when the agent should respond
-      // See more at https://docs.livekit.io/agents/build/turns
+      // Keep LiveKit's turn detection for reliability (Gemini's VAD is built-in)
       turnDetection: new livekit.turnDetector.MultilingualModel(),
       vad: ctx.proc.userData.vad! as silero.VAD,
-      voiceOptions: {
-        // Allow the LLM to generate a response while waiting for the end of turn
-        preemptiveGeneration: true,
-      },
     });
 
+    // COMMENTED OUT: OpenAI realtime pipeline alternative
     // To use a realtime model instead of a voice pipeline, use the following session setup instead.
     // (Note: This is for the OpenAI Realtime API. For other providers, see https://docs.livekit.io/agents/models/realtime/))
     // 1. Install '@livekit/agents-plugin-openai'
