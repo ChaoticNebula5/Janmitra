@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, memo } from 'react';
+import { useRef, memo } from 'react';
 import {
   motion,
   useScroll,
@@ -8,7 +8,6 @@ import {
   useSpring,
   MotionValue,
 } from 'framer-motion';
-import { Rocket } from 'lucide-react';
 import { OrbitingCircles } from '@/components/ui/orbiting-circles';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -51,20 +50,6 @@ export default function HeroCircle() {
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center [perspective:1400px]">
           <RingBackground progress={smooth} cinematic={cinematic} />
           <TextSequence progress={cinematic} />
-
-          {/* Footer */}
-          {/* <motion.div
-            style={{ opacity: useTransform(smooth, [0.9, 1], [1, 0]) }}
-            className="absolute bottom-8 z-50 flex gap-4"
-          >
-            <button className="flex items-center gap-2 bg-[#1a1a1a] border border-gray-800 px-4 py-2 rounded-full text-sm">
-              <Rocket size={16} className="text-green-400" />
-              JanMitra
-            </button>
-            <button className="bg-[#a3e635] text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-[#8cd128] transition-colors">
-              Join
-            </button>
-          </motion.div> */}
         </div>
       </div>
     </main>
