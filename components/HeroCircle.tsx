@@ -13,14 +13,14 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 /* -------------------------------------------------------------------------- */
-/* Utils                                                                       */
+/* Utils                                                                      */
 /* -------------------------------------------------------------------------- */
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /* -------------------------------------------------------------------------- */
-/* Main                                                                        */
+/* Main                                                                       */
 /* -------------------------------------------------------------------------- */
 export default function HeroCircle() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ export default function HeroCircle() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Ring Background                                                             */
+/* Ring Background                                                            */
 /* -------------------------------------------------------------------------- */
 const RingBackground = memo(function RingBackground({
   progress,
@@ -66,7 +66,6 @@ const RingBackground = memo(function RingBackground({
   progress: MotionValue<number>;
   cinematic: MotionValue<number>;
 }) {
-  // Split scaling = depth without lag
   const outerScale = useTransform(cinematic, [0, 0.6], [1.3, 6]);
   const innerScale = useTransform(cinematic, [0, 0.6], [1.3, 10]);
   const rotateX = useTransform(cinematic, [0, 0.5], [0, -12]);
@@ -79,12 +78,13 @@ const RingBackground = memo(function RingBackground({
     >
       <motion.div
         style={{ scale: innerScale, rotateX }}
-        className="relative flex h-[800px] w-[800px] items-center justify-center origin-center"
+        // Kept the scaling logic to ensure circles fit on screen
+        className="relative flex h-[800px] w-[800px] items-center justify-center origin-center scale-[0.45] sm:scale-[0.6] md:scale-[0.8] lg:scale-100"
       >
         {/* Core */}
         <div className="absolute w-[240px] h-[240px] rounded-full bg-[#0a0a0a] z-10" />
 
-        {/* Vibrant rings (original vibe) */}
+        {/* Vibrant rings */}
         <Ring size={340} border={26} className="border-purple-600/90 shadow-[0_0_30px_rgba(147,51,234,0.35)]" />
         <OrbitingCircles radius={170} duration={30}>
           <Avatar img="1.jpg" />
@@ -112,7 +112,7 @@ const RingBackground = memo(function RingBackground({
 });
 
 /* -------------------------------------------------------------------------- */
-/* Ring                                                                        */
+/* Ring                                                                       */
 /* -------------------------------------------------------------------------- */
 function Ring({
   size,
@@ -136,18 +136,23 @@ function Ring({
 }
 
 /* -------------------------------------------------------------------------- */
-/* Avatar                                                                      */
+/* Avatar                                                                     */
 /* -------------------------------------------------------------------------- */
 function Avatar({ img }: { img: string }) {
   return (
     <div className="absolute w-12 h-12 rounded-full overflow-hidden border-2 border-black shadow-lg bg-gray-200">
-      <img src={img} alt="user" className="w-full h-full object-cover" />
+      {/* Removed the logic that hid the image on mobile */}
+      <img 
+        src={img} 
+        alt="user" 
+        className="w-full h-full object-cover" 
+      />
     </div>
   );
 }
 
 /* -------------------------------------------------------------------------- */
-/* Text Sequence                                                               */
+/* Text Sequence                                                              */
 /* -------------------------------------------------------------------------- */
 const TextSequence = memo(function TextSequence({
   progress,
@@ -167,17 +172,20 @@ const TextSequence = memo(function TextSequence({
   const scale4 = useTransform(progress, [0.65, 0.8], [0.9, 1]);
 
   return (
-    <div className="relative z-20 flex items-center justify-center text-center w-full max-w-5xl px-4 pointer-events-none">
+    <div className="relative z-20 flex flex-col items-center justify-center text-center w-full max-w-[90%] md:max-w-5xl px-4 pointer-events-none">
+      
+      {/* Slide 1 */}
       <motion.div
         style={{ opacity: opacity1, scale: scale1 }}
-        className="absolute text-shadow-[0_0_40px_rgba(255,255,255,0.25)]"
+        className="absolute text-shadow-[0_0_40px_rgba(255,255,255,0.25)] w-full"
       >
-        <h1 className="text-8xl font-bold mb-2">JanMitra</h1>
-        <p className="text-xl text-gray-400">Sabka Sath Sabka Vikaas</p>
+        <h1 className="text-5xl md:text-8xl font-bold mb-2 md:mb-4">JanMitra</h1>
+        <p className="text-sm md:text-xl text-gray-400">Sabka Sath Sabka Vikaas</p>
       </motion.div>
 
-      <motion.div style={{ opacity: opacity2, y: y2 }} className="absolute">
-        <h2 className="text-6xl font-bold">
+      {/* Slide 2 */}
+      <motion.div style={{ opacity: opacity2, y: y2 }} className="absolute w-full">
+        <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
           Schemes exist. <br />
           Support exists.
           <br />
@@ -185,21 +193,23 @@ const TextSequence = memo(function TextSequence({
         </h2>
       </motion.div>
 
-      <motion.div style={{ opacity: opacity3, y: y3 }} className="absolute">
-        <h2 className="text-6xl font-bold">
-          Millions struggle not because help is unavailable
+      {/* Slide 3 */}
+      <motion.div style={{ opacity: opacity3, y: y3 }} className="absolute w-full">
+        <h2 className="text-2xl sm:text-3xl md:text-6xl font-bold leading-tight">
+          Millions struggle <br className="block sm:hidden" /> not because <br className="hidden sm:block" /> help is unavailable
           <br />
-          <span className="text-gray-500">
+          <span className="text-gray-500 block mt-2 sm:mt-0">
             but because information isn’t accessible.
           </span>
         </h2>
       </motion.div>
 
+      {/* Slide 4 */}
       <motion.div
         style={{ opacity: opacity4, scale: scale4 }}
-        className="absolute top-[-10vh]"
+        className="absolute top-[-5vh] md:top-[-10vh] w-full"
       >
-        <h2 className="text-5xl md:text-7xl font-bold leading-tight">
+        <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight">
           JanMitra exists<br />
           to change that.
         </h2>
