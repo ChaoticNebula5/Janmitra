@@ -67,10 +67,6 @@ export default function HeroCircle() {
           </motion.div>
         </div>
       </div>
-
-      <div className="h-screen flex items-center justify-center text-gray-500">
-        More content continues…
-      </div>
     </main>
   );
 }
