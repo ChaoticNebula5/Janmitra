@@ -2,16 +2,17 @@
 FROM python:3.12-bookworm
 
 # Install system dependencies for OpenCV (headless)
+# Install system dependencies for OpenCV (headless)
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender-dev \
     libgomp1 \
-    libgthread-2.0-0 \
     libgtk-3-0 \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Note: Using full Python image to include OpenGL libs needed for OpenCV in SmallWebRTC
 
