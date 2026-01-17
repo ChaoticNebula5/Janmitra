@@ -104,27 +104,27 @@ const RingBackground = memo(function RingBackground({
         <div className="absolute w-[240px] h-[240px] rounded-full bg-[#0a0a0a] z-10" />
 
         {/* Vibrant rings (original vibe) */}
-        <Ring size={340} border={20} className="border-purple-600/90 shadow-[0_0_30px_rgba(147,51,234,0.35)]" />
+        <Ring size={340} border={26} className="border-purple-600/90 shadow-[0_0_30px_rgba(147,51,234,0.35)]" />
         <OrbitingCircles radius={170} duration={30}>
           <Avatar img="1.jpg" />
         </OrbitingCircles>
 
-        <Ring size={460} border={24} className="border-blue-500/90 shadow-[0_0_30px_rgba(59,130,246,0.35)]" />
+        <Ring size={460} border={34} className="border-blue-500/90 shadow-[0_0_30px_rgba(59,130,246,0.35)]" />
         <OrbitingCircles radius={230} duration={40} reverse>
           <Avatar img="2.jpg" />
         </OrbitingCircles>
 
-        <Ring size={600} border={28} className="border-green-400/90 shadow-[0_0_30px_rgba(74,222,128,0.35)]" />
+        <Ring size={600} border={38} className="border-green-400/90 shadow-[0_0_30px_rgba(74,222,128,0.35)]" />
         <OrbitingCircles radius={300} duration={50}>
           <Avatar img="3.jpg" />
         </OrbitingCircles>
 
-        <Ring size={760} border={32} className="border-yellow-400/90 shadow-[0_0_30px_rgba(250,204,21,0.35)]" />
+        <Ring size={760} border={35} className="border-yellow-400/90 shadow-[0_0_30px_rgba(250,204,21,0.35)]" />
         <OrbitingCircles radius={380} duration={60} reverse>
           <Avatar img="4.jpg" />
         </OrbitingCircles>
 
-        <Ring size={950} border={36} className="border-rose-500/90 shadow-[0_0_30px_rgba(244,63,94,0.35)]" />
+        <Ring size={950} border={40} className="border-rose-500/90 shadow-[0_0_30px_rgba(244,63,94,0.35)]" />
       </motion.div>
     </motion.div>
   );
@@ -219,7 +219,8 @@ const TextSequence = memo(function TextSequence({
         className="absolute top-[-10vh]"
       >
         <h2 className="text-5xl md:text-7xl font-bold leading-tight">
-          JanMitra exists to change that.
+          JanMitra exists<br />
+          to change that.
         </h2>
       </motion.div>
     </div>
