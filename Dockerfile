@@ -1,19 +1,24 @@
-FROM dailyco/pipecat-base:latest
+# Dockerfile for Janmitra Voice Bot
+FROM python:3.12-slim
 
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
+# Install uv
+RUN pip install uv
 
-# Copy from the cache instead of linking since it's a mounted volume
-ENV UV_LINK_MODE=copy
+# Set working directory
+WORKDIR /app
 
-# Install the project's dependencies using the lockfile and settings
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --no-dev
+# Copy project files
+COPY . .
 
-# Copy the application code
-COPY ./assets assets
-# Select the bot implementation by uncommenting the appropriate line
-COPY ./bot-openai.py bot.py
-# COPY ./bot-gemini.py bot.py
+# Install dependencies
+RUN uv sync --frozen
+
+# Expose port for WebRTC server
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/offer || exit 1
+
+# Run the bot
+CMD ["uv", "run", "janmitra_bot.py", "--transport", "webrtc"]

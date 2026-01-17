@@ -1,10 +1,10 @@
 [project]
-name = "simple-chatbot"
+name = "janmitra"
 version = "0.1.0"
-description = "Simple chatbot built with Pipecat"
+description = "Janmitra voice assistant for rural Indians"
 requires-python = ">=3.10"
 dependencies = [
-    "pipecat-ai[daily,deepgram,elevenlabs,google,local-smart-turn-v3,runner,silero,webrtc]>=0.0.99",
+    "pipecat-ai[google,local-smart-turn-v3,runner,silero,webrtc]==0.0.99",
     "pipecatcloud",
 ]
 

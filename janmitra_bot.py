@@ -22,16 +22,22 @@ Run the bot using::
     uv run bot.py
 """
 
+import argparse
 import os
 
 from dotenv import load_dotenv
 from loguru import logger
+from PIL import Image
 from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3
 from pipecat.audio.vad.silero import SileroVADAnalyzer
 from pipecat.audio.vad.vad_analyzer import VADParams
 from pipecat.frames.frames import (
+    BotStartedSpeakingFrame,
+    BotStoppedSpeakingFrame,
     Frame,
     LLMRunFrame,
+    OutputImageRawFrame,
+    SpriteFrame,
 )
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
@@ -42,10 +48,9 @@ from pipecat.processors.aggregators.llm_response_universal import (
     LLMUserAggregatorParams,
 )
 from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor
-from pipecat.runner.types import DailyRunnerArguments, RunnerArguments, SmallWebRTCRunnerArguments
+from pipecat.runner.types import RunnerArguments, SmallWebRTCRunnerArguments
 from pipecat.services.google.gemini_live.llm import GeminiLiveLLMService
 from pipecat.transports.base_transport import BaseTransport, TransportParams
-from pipecat.transports.daily.transport import DailyParams, DailyTransport
 from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection
 from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport
 from pipecat.turns.user_stop.turn_analyzer_user_turn_stop_strategy import (
@@ -70,46 +75,15 @@ async def run_bot(transport: BaseTransport):
     if not api_key:
         raise ValueError("GOOGLE_API_KEY not set")
 
-    system_instruction = "You are Janmitra, a helpful voice assistant for rural Indians. Speak only in Hindi. Cite sources for information. Use tools when needed."
+    system_instruction = "You are Janmitra, a helpful voice assistant for rural Indians. Speak only in Hindi or Bundeli dialect. Provide factual information about government schemes, loans, and services. Cite sources when possible."
 
-    tools = [
-        {
-            "name": "lookup_scheme",
-            "description": "Search for government schemes based on query",
-            "parameters": {
-                "type": "object",
-                "properties": {"query": {"type": "string", "description": "The search query"}},
-                "required": ["query"],
-            },
-        },
-        {
-            "name": "fetch_api_data",
-            "description": "Fetch live data from government APIs",
-            "parameters": {
-                "type": "object",
-                "properties": {"endpoint": {"type": "string", "description": "API endpoint"}},
-                "required": ["endpoint"],
-            },
-        },
-        {
-            "name": "transfer_suggestion",
-            "description": "Suggest contacting an officer for complex issues",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "department": {"type": "string", "description": "Department to contact"}
-                },
-                "required": ["department"],
-            },
-        },
-    ]
+    tools = None
 
     # Initialize the Gemini Live model
     llm = GeminiLiveLLMService(
         api_key=api_key,
+        model="models/gemini-2.5-flash-native-audio-preview-12-2025",
         voice_id="Charon",  # Aoede, Charon, Fenrir, Kore, Puck
-        system_instruction=system_instruction,
-        tools=tools,
     )
 
     messages = [
@@ -182,18 +156,6 @@ async def bot(runner_args: RunnerArguments):
     transport = None
 
     match runner_args:
-        case DailyRunnerArguments():
-            transport = DailyTransport(
-                runner_args.room_url,
-                runner_args.token,
-                "Pipecat Bot",
-                params=DailyParams(
-                    audio_in_enabled=True,
-                    audio_out_enabled=True,
-                    video_out_enabled=False,
-                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-                ),
-            )
         case SmallWebRTCRunnerArguments():
             webrtc_connection: SmallWebRTCConnection = runner_args.webrtc_connection
 
@@ -214,10 +176,18 @@ async def bot(runner_args: RunnerArguments):
 
 
 if __name__ == "__main__":
-    # Default to SmallWebRTC
-    from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection
-    import asyncio
+    parser = argparse.ArgumentParser(description="Run Janmitra voice bot")
+    parser.add_argument(
+        "--transport", choices=["webrtc"], default="webrtc", help="Transport type (default: webrtc)"
+    )
+    args = parser.parse_args()
 
-    connection = SmallWebRTCConnection()
-    runner_args = SmallWebRTCRunnerArguments(webrtc_connection=connection)
-    asyncio.run(bot(runner_args))
+    if args.transport == "webrtc":
+        from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection
+        import asyncio
+
+        connection = SmallWebRTCConnection()
+        runner_args = SmallWebRTCRunnerArguments(webrtc_connection=connection)
+        asyncio.run(bot(runner_args))
+    else:
+        logger.error("Unsupported transport")

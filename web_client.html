@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Janmitra Web Client</title>
-    <script src="https://cdn.jsdelivr.net/npm/@pipecat-ai/client-js@latest/dist/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@pipecat-ai/small-webrtc-transport@latest/dist/index.js"></script>
 </head>
 <body>
     <h1>Janmitra Voice Chat</h1>
@@ -14,10 +12,17 @@
     <button id="stopBtn">Stop Chat</button>
     <div id="status">Status: Disconnected</div>
 
-    <script>
+    <script type="module">
+        import { PipecatClient } from 'https://cdn.jsdelivr.net/npm/@pipecat-ai/client-js@latest/dist/index.js';
+        import { SmallWebRTCTransport } from 'https://cdn.jsdelivr.net/npm/@pipecat-ai/small-webrtc-transport@latest/dist/index.js';
+
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const status = document.getElementById('status');
+
+        // Get URL from query param or default
+        const urlParams = new URLSearchParams(window.location.search);
+        const serverUrl = urlParams.get('server') || 'http://localhost:8080';
 
         let pcClient;
 
@@ -32,7 +37,7 @@
                 });
 
                 await pcClient.connect({
-                    webrtcUrl: '/offer',  // Adjust to your bot's endpoint
+                    webrtcUrl: `${serverUrl}/offer`,  // Bot's WebRTC signaling endpoint
                 });
 
                 status.textContent = 'Status: Connected';
@@ -40,7 +45,7 @@
                 stopBtn.disabled = false;
             } catch (error) {
                 console.error('Error starting chat:', error);
-                status.textContent = 'Status: Error';
+                status.textContent = 'Status: Error - ' + error.message;
             }
         });
 
