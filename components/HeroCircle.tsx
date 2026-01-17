@@ -53,7 +53,7 @@ export default function HeroCircle() {
           <TextSequence progress={cinematic} />
 
           {/* Footer */}
-          <motion.div
+          {/* <motion.div
             style={{ opacity: useTransform(smooth, [0.9, 1], [1, 0]) }}
             className="absolute bottom-8 z-50 flex gap-4"
           >
@@ -64,7 +64,7 @@ export default function HeroCircle() {
             <button className="bg-[#a3e635] text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-[#8cd128] transition-colors">
               Join
             </button>
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </main>
