@@ -111,9 +111,9 @@ export default function VoiceCall() {
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Nova' } },
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
         },
-        systemInstruction: "You are Janmitra... (keep your existing prompt here)"
+        systemInstruction: "You are Janmitra, a helpful, polite, simple-language voice companion for rural Indians. Always respond in the user's detected language/dialect (Hindi, Awadhi, Bundeli, Telugu, etc.).  Use easy words, speak slowly, explain schemes clearly.  Only give verified government info. If unsure, say you'll check or transfer to officer. Focus on: PM Kisan, loans for SC/ST, pensions, complaints, etc."
       },
       callbacks: {
         onopen: () => {
