@@ -58,6 +58,7 @@ export default function VoiceCall() {
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const nextStart = useRef(0);
   const activeSources = useRef<Set<AudioBufferSourceNode>>(new Set());
+  const mutedRef = useRef(false);
 
   // -- Timer Logic --
   useEffect(() => {
@@ -69,6 +70,11 @@ export default function VoiceCall() {
     }
     return () => clearInterval(interval);
   }, [active]);
+
+  // -- Mute State Sync --
+  useEffect(() => {
+    mutedRef.current = muted;
+  }, [muted]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -125,7 +131,7 @@ export default function VoiceCall() {
           processorRef.current = processor;
 
           processor.onaudioprocess = (e) => {
-            if (muted) return;
+            if (mutedRef.current) return;
             const input = e.inputBuffer.getChannelData(0);
             const pcm = new Int16Array(input.length);
             for (let i = 0; i < input.length; i++) {
@@ -278,7 +284,7 @@ export default function VoiceCall() {
                         ) : (
                           <p className="text-white/50 text-sm font-medium animate-pulse">
                             {status === 'LISTENING' ? 'Listening...' : 
-                             status === 'THINKING' ? 'Thinking...' : formatTime(callDuration)}
+                            status === 'THINKING' ? 'Thinking...' : formatTime(callDuration)}
                           </p>
                         )}
                       </div>
@@ -296,10 +302,6 @@ export default function VoiceCall() {
                       onClick={() => setMuted(!muted)} 
                     />
                     
-                    <ControlBtn icon={<span className="font-bold text-xl">#</span>} label="Keypad" />
-                    <ControlBtn icon={<Signal />} label="Audio" />
-                    <ControlBtn icon={<Wifi />} label="Video" />
-
                     {/* END CALL */}
                     <button 
                       onClick={stop}
