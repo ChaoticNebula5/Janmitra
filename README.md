@@ -236,7 +236,7 @@ We welcome contributions! Please:
 
 ## Acknowledgments
 
-Built with [LiveKit Agents](https://livekit.io/agents) and powered by [Google Gemini](https://ai.google.dev/). Inspired by the need to bridge India's rural-urban digital divide.
+Built with [LiveKit Agents](https://livekit.io/agents) and powered by [Sarvam AI](https://www.sarvam.ai/). Inspired by the need to bridge India's rural-urban digital divide.
 
 ---
 
