@@ -209,7 +209,7 @@ cd backend && docker build -t janmitra-backend .
 # Run with environment variables
 docker run -p 3001:3001 \
   -e LIVEKIT_URL=$LIVEKIT_URL \
-  -e GOOGLE_AI_API_KEY=$GOOGLE_AI_API_KEY \
+  -e SARVAM_AI_KEY=$SARVAM_AI_API_KEY \
   janmitra-backend
 ```
 
