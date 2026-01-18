@@ -32,7 +32,7 @@ Janmitra is a **missed-call away, dialect-aware voice bot** that:
 ## Technical Architecture
 
 ```
-User Speech → LiveKit Frontend (React) → LiveKit Server → Gemini Live Agent
+User Speech → LiveKit Frontend (React) → LiveKit Server → Sarvam AI Agent
                                       ↓                           ↓
                                WebRTC Connection          Dialect Detection
                                       ↓                           ↓
@@ -44,7 +44,7 @@ User Speech → LiveKit Frontend (React) → LiveKit Server → Gemini Live Agen
 ### Core Components
 
 - **Frontend**: Next.js React app with LiveKit Components for WebRTC voice interface
-- **Backend**: LiveKit Agents Node.js server with Gemini Live model
+- **Backend**: LiveKit Agents Node.js server with Sarvam AI model
 - **AI Pipeline**: End-to-end audio processing with automatic dialect detection
 - **Tools**: Web search for government information, RAG for verified knowledge
 - **Future**: Exotel telephony integration for toll-free access
@@ -64,7 +64,7 @@ User Speech → LiveKit Frontend (React) → LiveKit Server → Gemini Live Agen
 
 - Node.js 18+ and pnpm
 - LiveKit Cloud account ([sign up](https://cloud.livekit.io))
-- Google AI Studio API key for Gemini Live
+- Sarvam AI API Key
 
 ### Installation
 
@@ -97,7 +97,7 @@ User Speech → LiveKit Frontend (React) → LiveKit Server → Gemini Live Agen
    LIVEKIT_URL=https://your-livekit-server-url
    LIVEKIT_API_KEY=your_livekit_api_key
    LIVEKIT_API_SECRET=your_livekit_api_secret
-   GOOGLE_AI_API_KEY=your_gemini_api_key
+   SARVAM_AI_API_KEY=your_sarvam_ai__api_key
    ```
 
 4. **Download AI models** (backend)
@@ -124,7 +124,7 @@ User Speech → LiveKit Frontend (React) → LiveKit Server → Gemini Live Agen
 
 ```
 janmitra/
-├── frontend/                 # Next.js React app
+├── frontend/                # Next.js React app
 │   ├── app/                 # Next.js app router
 │   ├── components/          # React components
 │   └── lib/                 # Utilities
