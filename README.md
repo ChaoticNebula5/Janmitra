@@ -1,10 +1,13 @@
-<img width="600" height="879" alt="image" src="https://github.com/user-attachments/assets/89aa5832-8fbf-48c1-b145-efc4db6d70fa" /># Janmitra - Voice Companion for Rural India
+# Janmitra - Voice Companion for Rural India
 
-<img width="1919" height="1021" alt="image" src="https://github.com/user-attachments/assets/8938e10d-6350-43f5-87b9-74322f2fe1f9" />
-<img width="600" height="879" alt="image" src="https://github.com/user-attachments/assets/d29dcc9d-fdc1-4719-92fa-18cad106378a" />
-<img width="600" height="879" alt="image" src="https://github.com/user-attachments/assets/5ab915dc-690b-4e79-b42d-2b97ebaab722" />
-
-
+<div align="center">
+  <img 
+    src="https://github.com/user-attachments/assets/89aa5832-8fbf-48c1-b145-efc4db6d70fa"
+    width="600"
+    height="879"
+    alt="Janmitra – Voice Companion for Rural India"
+  />
+</div>
 
 [![LiveKit](https://img.shields.io/badge/Powered%20by-LiveKit-002CF2)](https://livekit.io)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933)](https://nodejs.org)
