@@ -21,17 +21,17 @@ A real-time voice AI bot accessible via web browser. Users open the web client, 
 
 - **WebRTC**: SmallWebRTCTransport (peer-to-peer WebRTC for real-time bidirectional audio)
 - **Framework**: Pipecat (orchestrates pipeline, handles audio frames, VAD, interruptions)
-- **LLM/Voice AI**: Google Gemini Live API (end-to-end speech-to-speech)
-  - Model: `models/gemini-2.5-flash-native-audio-preview-12-2025`
-  - Voice: Charon TTS
-  - Config: AUDIO modality, Hindi/Bundeli language tuned via system prompt
+- **LLM/Voice AI**: Sarvam AI (end-to-end speech-to-speech)
+  - Model: `Bulbul V2`
+  - Voice: Vidya
+  - Config: AUDIO modality, Multiple Indian Languages tuned via system prompt
 - **Voice Activity Detection**: Silero VAD with custom parameters
 - **Deployment**: Local server or containerized with Docker
   - Receives WebRTC connection → runs Pipecat pipeline → streams to/from Gemini Live
 
 ## Key Constraints & Guardrails
 
-- **Dialect Enforcement**: Speaks only in Hindi or Bundeli dialect (system prompt)
+- **Dialect Enforcement**: Can speak in multiple Indian languages and dialects
 - **Factual Only**: No medical advice, astrology, politics; always cite sources verbally
 - **Safety Blocks**: Off-topic intents filtered out
 - **PII Redaction**: Logs scrubbed of personal data
@@ -62,7 +62,7 @@ Web Browser → WebRTC → Pipecat Pipeline → Gemini Live → Response
 ### Prerequisites
 
 - Python 3.12+
-- Google Gemini API key
+- Sarvam AI API key
 
 ### 1. Environment Setup
 
@@ -77,7 +77,7 @@ cp env.example .env
 Edit `.env`:
 
 ```ini
-GOOGLE_API_KEY=your_gemini_api_key
+SARVAM_AI_API_KEY=your_sarvam_ai_api_key
 # Add other secrets as needed
 ```
 
@@ -122,7 +122,7 @@ docker-compose up
 
 ### Code Structure
 
-- `janmitra_bot.py`: Main bot logic, pipeline setup, Gemini integration
+- `janmitra_bot.py`: Main bot logic, pipeline setup, Sarvam AI integration
 - `web_client.html`: Browser-based WebRTC client
 - `pyproject.toml`: Python project configuration and dependencies
 - `docker-compose.yml`: Container orchestration
@@ -132,7 +132,7 @@ docker-compose up
 Update system prompt in `janmitra_bot.py`:
 
 ```python
-system_instruction = "You are Janmitra, a helpful voice assistant for rural Indians. Speak only in Hindi or Bundeli dialect. Provide factual information about government schemes, loans, and services. Cite sources when possible."
+system_instruction = "You are Janmitra, a helpful voice assistant for rural Indians. Speak in multiple Indian languages and dialects. Provide factual information about government schemes, loans, and services. Cite sources when possible."
 ```
 
 ### Testing
@@ -144,7 +144,7 @@ system_instruction = "You are Janmitra, a helpful voice assistant for rural Indi
 ## Roadmap
 
 ### Phase 1 (Current): Core Voice Assistant
-- ✅ Basic Hindi/Bundeli voice interaction
+- ✅ Voice interaction
 - ✅ Factual government information responses
 - ✅ WebRTC browser connectivity
 - ✅ Docker deployment
@@ -169,9 +169,9 @@ system_instruction = "You are Janmitra, a helpful voice assistant for rural Indi
 
 ## Contributing
 
-- Follow Pipecat best practices for voice agents
+- Follow Livekit best practices for voice agents
 - Ensure all responses are factual and sourced
-- Test with web client and Hindi/Bundeli inputs
+- Test with web client and multiple language inputs
 - Maintain dialect accuracy and cultural sensitivity
 
 ## License
@@ -180,5 +180,5 @@ BSD 2-Clause License
 
 ---
 
-Built for rural India with Pipecat and Google Gemini Live.</content>
+Built for rural India with Livekit and Sarvam AI.</content>
 <parameter name="filePath">/home/saury/Projects/Janmitra/yayitworks/README.md
